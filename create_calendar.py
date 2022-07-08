@@ -13,8 +13,11 @@ from datetime import datetime, timedelta
 FORMAT = '%(levelname)s | %(message)s'
 logging.basicConfig(format=FORMAT)
 
+logger = logging.getLogger('tika.tika')
+logger.setLevel(logging.ERROR)
+
 def get_args():
-	parser = argparse.ArgumentParser(description='Create collection calendar for the commune of Frisange.')
+	parser = argparse.ArgumentParser(description='Create collection calendar for the commune of Frisange. By default the events are created for the day before collection. Use --same-day option to override this behaviour.')
 	parser.add_argument('--out', dest='output_filename', default='garbage_collection.ics', help='Output filename.')
 	group = parser.add_mutually_exclusive_group(required=True)
 	group.add_argument('--pdf', dest='pdf_calendar', default=None, help='Path to calendar in PDF.')
@@ -22,6 +25,7 @@ def get_args():
 	parser.add_argument('--event-start-hour', type=int, choices=range(0,24), help='Start hour for events.', metavar="[0-23]", default=20)
 	parser.add_argument('--event-start-minute', type=int, choices=range(0,60), help='Start minute for events.', metavar="[0-59]", default=0)
 	parser.add_argument('--event-duration', type=int, choices=range(10,61), help='Event duration.', metavar="[10-60]", default=15)
+	parser.add_argument('--same-day', dest='same_day', action='store_true', help='By default the events are created for the day before collection. If this option is used, the events will be created for collection day.', default=False)
 	parser.add_argument('-d','--debug', action='store_true', help='Debug True/False', default=False)
 
 	args = parser.parse_args()
@@ -29,6 +33,11 @@ def get_args():
 		logging.getLogger().setLevel(logging.DEBUG)
 	else:
 		logging.getLogger().setLevel(logging.INFO)
+
+	if not args.same_day:
+		logging.info(f'Events have been created for the day before collection. Use --same-day option to override this behaviour.')
+	else:
+		logging.info(f'Events have been created for collection day.')
 
 	return args
 
@@ -107,6 +116,8 @@ class CalendarCreator:
 		e = Event()
 		day, month, year = date
 		start_date = datetime(year, month, day, self.args.event_start_hour, self.args.event_start_minute, 0, tzinfo=self.TZ)
+		if not self.args.same_day:
+			start_date - timedelta(days=1)
 		end_date = start_date + timedelta(minutes=self.args.event_duration)
 		e.add('summary', f'🚮 {details}')
 		e.add('dtstart', start_date)
