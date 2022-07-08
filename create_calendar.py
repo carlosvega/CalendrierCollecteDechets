@@ -122,6 +122,7 @@ class CalendarCreator:
 		e.add('summary', f'🚮 {details}')
 		e.add('dtstart', start_date)
 		e.add('dtend', end_date)
+		e.add('description', f'Collecte des déchets ({details}): Matin {int(day):02d}/{month:02d}/{year}')
 		e['location'] = 'Frisange (Luxembourg)'
 		e['uid'] = str(uuid.uuid4())
 		return e
