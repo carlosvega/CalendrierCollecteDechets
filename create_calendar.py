@@ -117,7 +117,7 @@ class CalendarCreator:
 		day, month, year = date
 		start_date = datetime(year, month, day, self.args.event_start_hour, self.args.event_start_minute, 0, tzinfo=self.TZ)
 		if not self.args.same_day:
-			start_date - timedelta(days=1)
+			start_date = start_date - timedelta(days=1)
 		end_date = start_date + timedelta(minutes=self.args.event_duration)
 		e.add('summary', f'🚮 {details}')
 		e.add('dtstart', start_date)
