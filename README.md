@@ -1,3 +1,6 @@
+<img align="right" src="https://user-images.githubusercontent.com/1414389/177890722-7a44e595-6e3a-42d4-b6de-55ccc1419680.png" width="500"/>
+
+
 # CalendrierCollecteDechets
 
 This tool exports an ICS file with all the events extracted from the calendar of garbage collection provided by the commune of Frisange in Luxembourg.
